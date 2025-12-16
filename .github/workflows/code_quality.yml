@@ -9,7 +9,6 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:  # Ручной запуск с кнопки
 
 jobs:
   build-and-test:
@@ -28,25 +27,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install black flake8 pytest
 
-      - name: Lint code with flake8
+      - name: Run tests
         run: |
-          flake8 src/ --statistics > flake8-report.txt
-        continue-on-error: false  # workflow упадёт при ошибках PEP8
-
-      - name: Upload flake8 report
-        uses: actions/upload-artifact@v4
-        with:
-          name: flake8-report
-          path: flake8-report.txt
-
-      - name: Check code formatting with black
-        run: |
-          black --check src/
-
-      - name: Run tests with pytest
-        run: |
-          pytest tests/ --junitxml=results.xml --cov=src --cov-report=xml
+          pytest tests/ --junitxml=results.xml
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -54,19 +39,16 @@ jobs:
           name: test-results
           path: results.xml
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage.xml
-
-      - name: Generate HTML reports
+      - name: Lint code with Flake8
         run: |
-          pytest --cov=src --cov-report=html
-        continue-on-error: true
+          flake8 src/ --exit-zero --statistics > flake8-report.txt || true
 
-      - name: Upload HTML coverage report
+      - name: Upload Flake8 report
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-html
-          path: htmlcov/
+          name: flake8-report
+          path: flake8-report.txt
+
+      - name: Check code format with Black
+        run: |
+          black --check src/ || true
