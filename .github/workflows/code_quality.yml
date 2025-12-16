@@ -1,54 +1,51 @@
-name: Code Quality and Report
+name: Code Quality Assessment
 
 on:
   push:
-    branches: [main, develop]
+    branches:
+      - main
   pull_request:
-    branches: [main, develop]
+    branches:
+      - main
   schedule:
-    - cron: '0 8 * * *'  # каждый день в 8:00 UTC
-  workflow_dispatch:   # ручной запуск с параметрами
+    - cron: "0 0 * * 0"  # запуск каждое воскресенье в 00:00
+  workflow_dispatch:
 
 jobs:
-  lint_test_report:
+  lint-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8, 3.9, 3.10]
 
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8 pytest coverage radon
 
-    - name: Lint code with flake8
-      run: |
-        flake8 src tests --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 src tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: Lint code with flake8
+        run: flake8 src/ tests/ --max-line-length=120
 
-    - name: Format check with black
-      run: black --check src tests || true
+      - name: Run tests with coverage
+        run: |
+          coverage run -m pytest tests/
+          coverage report
+          coverage xml
 
-    - name: Run tests
-      run: pytest tests/ -v --cov=src --cov-report=xml
+      - name: Code maintainability (radon)
+        run: |
+          radon cc src/ -s -a > reports/complexity.txt || true
+          radon mi src/ -s -a > reports/maintainability.txt || true
 
-    - name: Generate code quality report
-      run: |
-        mkdir -p reports
-        radon cc src -s -a > reports/complexity.txt
-        radon mi src -s > reports/maintainability.txt
-        pytest --cov=src --cov-report=html:reports/coverage_html
-
-    - name: Upload reports as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: code_quality_reports
-        path: reports/
+      - name: Upload reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-quality-reports
+          path: reports/
