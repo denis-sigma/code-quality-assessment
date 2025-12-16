@@ -1,6 +1,7 @@
 import ast
 from src.metrics import has_docstring
 
+
 def test_has_docstring():
     code = """\"\"\"Doc\"\"\"
 print(1)
