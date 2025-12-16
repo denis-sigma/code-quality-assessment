@@ -123,6 +123,3 @@ code-quality-assessment/
 
 [MIT License](LICENSE)
 
-```
-Хочешь, чтобы я это сделал?
-```
