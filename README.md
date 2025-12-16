@@ -53,7 +53,7 @@ flake8 src/ --statistics
 
 Пример вывода flake8:
 
-```
+```text
 src/module.py:12:1: F401 'os' imported but unused
 src/module.py:45:5: E303 too many blank lines (2)
 2     F401 'os' imported but unused
@@ -68,7 +68,7 @@ pytest tests/ --maxfail=1 --disable-warnings -q
 
 Пример вывода pytest:
 
-```
+```text
 ============================= test session starts =============================
 platform linux -- Python 3.12.0, pytest-9.0.2
 collected 5 items
@@ -101,7 +101,8 @@ name: Code Quality
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   schedule:
     - cron: "0 0 * * 0"
 
@@ -134,3 +135,6 @@ jobs:
 Проект распространяется под лицензией **MIT License**.
 
 ---
+
+
+Хочешь, чтобы я так сделал?
