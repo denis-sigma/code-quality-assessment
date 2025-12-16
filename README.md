@@ -1,6 +1,3 @@
----
-
-````markdown
 # Code Quality Assessment
 
 ## 📖 Описание проекта
@@ -124,3 +121,4 @@ code-quality-assessment/
 [MIT License](LICENSE)
 
 ```
+
