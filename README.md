@@ -20,7 +20,7 @@
 ### Настройка проекта
 ```bash
 # Клонируем репозиторий
-git clone <URL вашего репозитория>
+git clone git@github.com:denis-sigma/code-quality-assessment.git
 cd code-quality-assessment
 
 # Создаем виртуальное окружение
@@ -123,6 +123,4 @@ code-quality-assessment/
 
 [MIT License](LICENSE)
 
-```
-Хочешь, чтобы я это сделал?
-```
+
